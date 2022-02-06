@@ -1,3 +1,4 @@
 .idea
 venv
 django-app/.env
+__pycache__

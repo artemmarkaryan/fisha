@@ -1,5 +1,2 @@
 .idea
-venv
-django-app/.env
-*.pyc
 *.DS_Store

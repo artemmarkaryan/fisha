@@ -1,0 +1,21 @@
+syntax = "proto3";
+package api;
+
+option go_package = "gen/api";
+
+service API {
+    rpc Empty(EmptyRequest) returns (EmptyResponse);
+    rpc String(EmptyRequest) returns (EmptyResponse);
+}
+
+message EmptyRequest {}
+
+message StringRequest {
+    string string = 1;
+}
+
+message EmptyResponse {}
+
+message StringResponse {
+    string string = 1;
+}

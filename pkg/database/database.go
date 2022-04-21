@@ -5,29 +5,30 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/artemmarkaryan/fisha/facade/pkg/logy"
 	_ "github.com/lib/pq"
 )
 
 const databaseKey = "database"
 
 type Config struct {
-	host     string
-	port     string
-	user     string
-	password string
-	dbname   string
+	Host     string
+	Port     string
+	User     string
+	Password string
+	DBName   string
 }
 
 func (c Config) psql() string {
 	return fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		c.host, c.port, c.user, c.password, c.dbname)
+		c.Host, c.Port, c.User, c.Password, c.DBName)
 }
 
 type closeDB func() error
 type DBProvider func() (db *sql.DB, closer closeDB, err error)
 
-func check(cfg Config) error {
+func check(ctx context.Context, cfg Config) error {
 	db, err := sql.Open("postgres", cfg.psql())
 	if err != nil {
 		return err
@@ -39,11 +40,13 @@ func check(cfg Config) error {
 		return err
 	}
 
+	logy.Log(ctx).Infoln("connected to database")
+
 	return nil
 }
 
 func Init(ctx context.Context, cfg Config) (context.Context, error) {
-	err := check(cfg)
+	err := check(ctx, cfg)
 	if err != nil {
 		return ctx, err
 	}

@@ -10,4 +10,4 @@ create table if not exists "activity"
 
     created_at  timestamp default current_timestamp,
     updated_at  timestamp default current_timestamp
-)
+);

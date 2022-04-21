@@ -1,5 +1,3 @@
-drop table if exists "activity_interest";
-
 create table if not exists "activity_interest"
 (
     activity_id     int    not null,
@@ -13,4 +11,4 @@ create table if not exists "activity_interest"
 
     created_at  timestamp       default current_timestamp,
     updated_at  timestamp       default current_timestamp
-)
+);

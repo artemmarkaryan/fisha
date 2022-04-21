@@ -10,4 +10,4 @@ create table if not exists "user_interest"
 
     created_at  timestamp       default current_timestamp,
     updated_at  timestamp       default current_timestamp
-)
+);

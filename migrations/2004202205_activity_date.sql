@@ -8,4 +8,4 @@ create table if not exists "activity_date"
 
     start_date  date,
     end_date    date
-)
+);

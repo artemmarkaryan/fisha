@@ -1,13 +1,20 @@
-create table if not exists "user_interest"
+create table user_interest
 (
-    user_id     int    not null,
-    constraint user_interest__user_id_fk foreign key (user_id) references "user" (id) on delete cascade on update cascade,
-
-    interest_id int    not null,
-    constraint user_interest__interest_id_fk foreign key (interest_id) references "interest" (id) on delete cascade on update cascade,
-
-    rank        float4 not null default 0,
-
-    created_at  timestamp       default current_timestamp,
-    updated_at  timestamp       default current_timestamp
+    user_id     integer             not null
+        constraint user_interest__user_id_fk
+            references "user"
+            on update cascade on delete cascade,
+    interest_id integer             not null
+        constraint user_interest__interest_id_fk
+            references interest
+            on update cascade on delete cascade,
+    rank        real      default 0 not null
+        constraint user_interest__rank_boundaries
+            check ((rank >= ('-1'::integer)::double precision) AND (rank <= (1)::double precision)),
+    created_at  timestamp default CURRENT_TIMESTAMP,
+    updated_at  timestamp default CURRENT_TIMESTAMP
 );
+
+alter table user_interest
+    owner to admin;
+

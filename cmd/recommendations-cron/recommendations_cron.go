@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/artemmarkaryan/fisha/facade/internal/config"
-	"github.com/artemmarkaryan/fisha/facade/internal/server"
 	"github.com/artemmarkaryan/fisha/facade/pkg/database"
 	"github.com/artemmarkaryan/fisha/facade/pkg/logy"
 	_ "github.com/joho/godotenv/autoload"
@@ -17,12 +16,10 @@ func main() {
 	ctx = initLogger(ctx)
 	ctx, err := initDatabase(ctx)
 	if err != nil {
-		log.Fatalln("unable to cennect to database")
+		log.Fatalln("unable to connect to database: ", err)
 	}
 
-	if err = server.Serve(ctx); err != nil {
-		logy.Log(ctx).Errorf("failed to serve: %w", err)
-	}
+	new(recommendation.Cron).Process(ctx)
 }
 
 func initLogger(ctx context.Context) context.Context {

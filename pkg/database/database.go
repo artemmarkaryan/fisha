@@ -2,10 +2,10 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 
 	"github.com/artemmarkaryan/fisha/facade/pkg/logy"
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
@@ -26,10 +26,10 @@ func (c Config) psql() string {
 }
 
 type closeDB func() error
-type DBProvider func() (db *sql.DB, closer closeDB, err error)
+type DBProvider func() (db *sqlx.DB, closer closeDB, err error)
 
 func check(ctx context.Context, cfg Config) error {
-	db, err := sql.Open("postgres", cfg.psql())
+	db, err := sqlx.Connect("postgres", cfg.psql())
 	if err != nil {
 		return err
 	}
@@ -51,8 +51,8 @@ func Init(ctx context.Context, cfg Config) (context.Context, error) {
 		return ctx, err
 	}
 
-	var g DBProvider = func() (db *sql.DB, closer closeDB, err error) {
-		db, err = sql.Open("postgres", cfg.psql())
+	var g DBProvider = func() (db *sqlx.DB, closer closeDB, err error) {
+		db, err = sqlx.Open("postgres", cfg.psql())
 		if err != nil {
 			return
 		}

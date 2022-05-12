@@ -1,6 +1,7 @@
 package marchy
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
@@ -39,4 +40,9 @@ func Obj[T protoMsg](ctx context.Context, r *http.Request) (o T, err error) {
 func Force(obj any) (r []byte) {
 	r, _ = json.Marshal(obj)
 	return
+}
+
+func ForceReader(obj any) (r io.Reader) {
+	b, _ := json.Marshal(obj)
+	return bytes.NewReader(b)
 }

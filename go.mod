@@ -1,4 +1,4 @@
-module github.com/artemmarkaryan/fisha/facade
+module github.com/artemmarkaryan/fisha-facade
 
 go 1.18
 

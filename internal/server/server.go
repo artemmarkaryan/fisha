@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/artemmarkaryan/fisha/facade/internal/service/interest"
-	"github.com/artemmarkaryan/fisha/facade/internal/service/user"
-	"github.com/artemmarkaryan/fisha/facade/pkg/logy"
+	"github.com/artemmarkaryan/fisha-facade/internal/service/interest"
+	"github.com/artemmarkaryan/fisha-facade/internal/service/user"
+	"github.com/artemmarkaryan/fisha-facade/pkg/logy"
 	"github.com/gernest/alien"
 )
 

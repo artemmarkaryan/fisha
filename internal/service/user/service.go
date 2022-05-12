@@ -4,7 +4,7 @@ import (
 	"context"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/artemmarkaryan/fisha/facade/pkg/database"
+	"github.com/artemmarkaryan/fisha-facade/pkg/database"
 )
 
 type Service struct{}

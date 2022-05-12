@@ -6,10 +6,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/artemmarkaryan/fisha/facade/internal/config"
-	"github.com/artemmarkaryan/fisha/facade/internal/cron/recommendation"
-	"github.com/artemmarkaryan/fisha/facade/pkg/database"
-	"github.com/artemmarkaryan/fisha/facade/pkg/logy"
+	"github.com/artemmarkaryan/fisha-facade/internal/config"
+	"github.com/artemmarkaryan/fisha-facade/internal/cron/recommendation"
+	"github.com/artemmarkaryan/fisha-facade/pkg/database"
+	"github.com/artemmarkaryan/fisha-facade/pkg/logy"
 	_ "github.com/joho/godotenv/autoload"
 )
 

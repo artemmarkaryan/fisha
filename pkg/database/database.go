@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/artemmarkaryan/fisha/facade/pkg/logy"
+	"github.com/artemmarkaryan/fisha-facade/pkg/logy"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )

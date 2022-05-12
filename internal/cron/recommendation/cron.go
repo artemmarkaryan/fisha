@@ -3,9 +3,9 @@ package recommendation
 import (
 	"context"
 
-	"github.com/artemmarkaryan/fisha/facade/internal/service/activity"
-	"github.com/artemmarkaryan/fisha/facade/internal/service/recommendation"
-	"github.com/artemmarkaryan/fisha/facade/internal/service/user"
+	"github.com/artemmarkaryan/fisha-facade/internal/service/activity"
+	"github.com/artemmarkaryan/fisha-facade/internal/service/recommendation"
+	"github.com/artemmarkaryan/fisha-facade/internal/service/user"
 )
 
 const (

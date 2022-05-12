@@ -4,8 +4,8 @@ import (
 	"context"
 	"math"
 
-	ai "github.com/artemmarkaryan/fisha/facade/internal/service/activity_interest"
-	ui "github.com/artemmarkaryan/fisha/facade/internal/service/user-interest"
+	ai "github.com/artemmarkaryan/fisha-facade/internal/service/activity_interest"
+	ui "github.com/artemmarkaryan/fisha-facade/internal/service/user-interest"
 )
 
 type Service struct{}

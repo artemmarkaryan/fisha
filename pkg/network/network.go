@@ -3,7 +3,7 @@ package network
 import (
 	"net/http"
 
-	"github.com/artemmarkaryan/fisha/facade/pkg/marchy"
+	"github.com/artemmarkaryan/fisha-facade/pkg/marchy"
 )
 
 func WriteError(w http.ResponseWriter, text string, code int) {

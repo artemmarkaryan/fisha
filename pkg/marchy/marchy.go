@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/artemmarkaryan/fisha/facade/pkg/logy"
+	"github.com/artemmarkaryan/fisha-facade/pkg/logy"
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 

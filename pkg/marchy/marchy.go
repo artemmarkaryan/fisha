@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"io"
-	"net/http"
 
 	"github.com/artemmarkaryan/fisha-facade/pkg/logy"
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -17,10 +16,10 @@ type protoMsg interface {
 	ProtoReflect() protoreflect.Message
 }
 
-func Obj[T protoMsg](ctx context.Context, r *http.Request) (o T, err error) {
+func Obj[T protoMsg](ctx context.Context, r io.ReadCloser) (o T, err error) {
 	var b []byte
 
-	b, err = io.ReadAll(r.Body)
+	b, err = io.ReadAll(r)
 	if err != nil {
 		logy.Log(ctx).Debugf(tag+" reading error: %q", err)
 

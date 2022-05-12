@@ -11,7 +11,7 @@ import (
 
 func (s Server) login(ctx context.Context) handler {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userIdReq, err := marchy.Obj[*api.UserIdRequest](ctx, r)
+		userIdReq, err := marchy.Obj[*api.UserIdRequest](ctx, r.Body)
 		if err != nil {
 			network.WriteError(w, "internal: "+err.Error(), 500)
 			return

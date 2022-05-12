@@ -10,12 +10,7 @@ import (
 type Service struct{}
 
 func (Service) GetBatch(ctx context.Context, from int64, limit uint64) (us []User, err error) {
-	dbp, err := database.Get(ctx)
-	if err != nil {
-		return
-	}
-
-	db, c, err := dbp()
+	db, c, err := database.Get(ctx)()
 	defer c()
 
 	q, a, err := sq.
@@ -34,4 +29,6 @@ func (Service) GetBatch(ctx context.Context, from int64, limit uint64) (us []Use
 	return
 }
 
-func (Service) Login(ctx context.Context, user int64) {}
+func (Service) Login(ctx context.Context, user int64) (isNew bool, err error) {
+
+}

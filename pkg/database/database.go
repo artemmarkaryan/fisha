@@ -65,12 +65,12 @@ func Init(ctx context.Context, cfg Config) (context.Context, error) {
 	return context.WithValue(ctx, databaseKey, g), nil
 }
 
-func Get(ctx context.Context) (DBProvider, error) {
+func Get(ctx context.Context) DBProvider {
 	v := ctx.Value(databaseKey)
 	p, ok := v.(DBProvider)
 	if !ok {
-		return nil, fmt.Errorf(databaseKey+" has wrong type: %[1]v %[1]T", v)
+		panic(fmt.Errorf(databaseKey+" has wrong type: %[1]v %[1]T", v))
 	}
 
-	return p, nil
+	return p
 }

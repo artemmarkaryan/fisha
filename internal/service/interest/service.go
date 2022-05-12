@@ -10,12 +10,7 @@ import (
 type Service struct{}
 
 func (Service) Names(ctx context.Context) (i []string, err error) {
-	dbp, err := database.Get(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	db, c, err := dbp()
+	db, c, err := database.Get(ctx)()
 	if err != nil {
 		return nil, err
 	}

@@ -10,12 +10,7 @@ import (
 type Service struct{}
 
 func (Service) ByUserIds(ctx context.Context, uId []int64) (ui []UserInterest, err error) {
-	dbp, err := database.Get(ctx)
-	if err != nil {
-		return
-	}
-
-	db, c, err := dbp()
+	db, c, err := database.Get(ctx)()
 	defer c()
 
 	q, a, err := sq.

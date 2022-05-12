@@ -10,12 +10,7 @@ import (
 type repo struct{}
 
 func (repo) getNear(ctx context.Context, lon, lat float64, distanceMeters int, limit uint64) (as []Activity, err error) {
-	dbp, err := database.Get(ctx)
-	if err != nil {
-		return
-	}
-
-	db, c, err := dbp()
+	db, c, err := database.Get(ctx)()
 	defer c()
 
 	q, a, err := sq.

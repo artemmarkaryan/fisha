@@ -10,12 +10,7 @@ import (
 type repo struct{}
 
 func (repo) Upsert(ctx context.Context, recs []R12n) error {
-	dbp, err := database.Get(ctx)
-	if err != nil {
-		return err
-	}
-
-	db, c, err := dbp()
+	db, c, err := database.Get(ctx)()
 	if err != nil {
 		return err
 	}

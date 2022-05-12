@@ -32,13 +32,13 @@ func (c Cron) Process(ctx context.Context) error {
 		var userIds = make([]int64, 0, len(users))
 		var r12ns = make([]recommendation.R12n, 0, len(users)*int(nearActivitiesLimit))
 		for _, u := range users {
-			if u.LastLocationLon == 0 && u.LastLocationLat == 0 {
+			if u.LastLocationLon == nil || *u.LastLocationLon == 0 || u.LastLocationLat == nil || *u.LastLocationLat == 0 {
 				continue
 			}
 			userIds = append(userIds, u.Id)
 
 			var activities []activity.Activity
-			activities, err = c.activity.GetNear(ctx, u.LastLocationLon, u.LastLocationLat, userActivityDistance, nearActivitiesLimit)
+			activities, err = c.activity.GetNear(ctx, *u.LastLocationLon, *u.LastLocationLat, userActivityDistance, nearActivitiesLimit)
 			if err != nil {
 				return err
 			}

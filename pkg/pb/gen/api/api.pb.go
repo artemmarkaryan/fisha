@@ -63,7 +63,7 @@ type InterestsRespose struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Interest []string `protobuf:"bytes,1,rep,name=interest,proto3" json:"interest,omitempty"`
+	Interest []string `protobuf:"bytes,1,rep,name=interest,proto3" json:"interest"`
 }
 
 func (x *InterestsRespose) Reset() {
@@ -110,7 +110,7 @@ type UserIdRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id"`
 }
 
 func (x *UserIdRequest) Reset() {
@@ -157,7 +157,7 @@ type LoginResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	New bool `protobuf:"varint,1,opt,name=new,proto3" json:"new,omitempty"`
+	New bool `protobuf:"varint,1,opt,name=new,proto3" json:"new"`
 }
 
 func (x *LoginResponse) Reset() {

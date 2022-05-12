@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/artemmarkaryan/fisha/facade/internal/service/interest"
+	"github.com/artemmarkaryan/fisha/facade/internal/service/user"
 	"github.com/artemmarkaryan/fisha/facade/pkg/logy"
 	"github.com/gernest/alien"
 )
@@ -12,7 +13,8 @@ import (
 const module = "server"
 
 type Server struct {
-	interest interest.Service
+	interestSvc interest.Service
+	userSvc     user.Service
 }
 
 type handler func(w http.ResponseWriter, r *http.Request)

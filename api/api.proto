@@ -4,18 +4,11 @@ package api;
 option go_package = "gen/api";
 
 service API {
-    rpc Empty(EmptyRequest) returns (EmptyResponse);
-    rpc String(EmptyRequest) returns (EmptyResponse);
+    rpc Interests(EmptyRequest) returns (InterestsRespose);
 }
 
 message EmptyRequest {}
 
-message StringRequest {
-    string string = 1;
-}
-
-message EmptyResponse {}
-
-message StringResponse {
-    string string = 1;
+message InterestsRespose{
+    repeated string interest = 1;
 }

@@ -35,3 +35,8 @@ func Obj[T protoMsg](ctx context.Context, r *http.Request) (o T, err error) {
 
 	return
 }
+
+func Force(obj any) (r []byte) {
+	r, _ = json.Marshal(obj)
+	return
+}

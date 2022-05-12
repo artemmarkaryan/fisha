@@ -4,18 +4,23 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/artemmarkaryan/fisha/facade/internal/service/interest"
 	"github.com/artemmarkaryan/fisha/facade/pkg/logy"
-	"github.com/artemmarkaryan/fisha/facade/pkg/marchy"
-	"github.com/artemmarkaryan/fisha/facade/pkg/pb/gen/api"
 	"github.com/gernest/alien"
 )
 
 const module = "server"
 
-func Serve(ctx context.Context) (err error) {
+type Server struct {
+	interest interest.Service
+}
+
+type handler func(w http.ResponseWriter, r *http.Request)
+
+func (s Server) Serve(ctx context.Context) (err error) {
 	m := alien.New()
 
-	if m, err = addHandlers(ctx, m); err != nil {
+	if m, err = s.registerHandlers(ctx, m); err != nil {
 		return
 	}
 
@@ -27,17 +32,13 @@ func Serve(ctx context.Context) (err error) {
 	return nil
 }
 
-func addHandlers(ctx context.Context, m *alien.Mux) (nm *alien.Mux, err error) {
-
+func (s Server) registerHandlers(ctx context.Context, m *alien.Mux) (nm *alien.Mux, err error) {
 	for _, err = range []error{
-		m.Post("/", func(w http.ResponseWriter, r *http.Request) {
-			_, _ = marchy.Obj[*api.EmptyRequest](ctx, r)
-		}),
-
-		m.Post("/string", func(w http.ResponseWriter, r *http.Request) {
-			_, _ = marchy.Obj[*api.StringRequest](ctx, r)
-		}),
+		m.Get("/interests", s.interests(ctx)),
 	} {
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return m, nil

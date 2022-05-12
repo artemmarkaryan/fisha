@@ -20,7 +20,9 @@ func main() {
 		log.Fatalln("unable to connect to database: ", err)
 	}
 
-	if err = server.Serve(ctx); err != nil {
+	s := new(server.Server)
+
+	if err = s.Serve(ctx); err != nil {
 		logy.Log(ctx).Errorf("failed to serve: %w", err)
 	}
 }

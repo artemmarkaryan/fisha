@@ -9,7 +9,7 @@ import (
 
 type Service struct{}
 
-func (Service) GetBatch(ctx context.Context, from int64, limit int) (us []User, err error) {
+func (Service) GetBatch(ctx context.Context, from int64, limit uint64) (us []User, err error) {
 	dbp, err := database.Get(ctx)
 	if err != nil {
 		return
@@ -22,6 +22,7 @@ func (Service) GetBatch(ctx context.Context, from int64, limit int) (us []User, 
 		Select("*").
 		From(`"user"`).
 		Where(sq.Gt{"id": from}).
+		Limit(limit).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
@@ -32,3 +33,5 @@ func (Service) GetBatch(ctx context.Context, from int64, limit int) (us []User, 
 
 	return
 }
+
+func (Service) Login(ctx context.Context, user int64) {}

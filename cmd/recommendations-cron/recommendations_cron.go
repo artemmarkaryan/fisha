@@ -4,8 +4,10 @@ import (
 	"context"
 	"log"
 	"os"
+	"time"
 
 	"github.com/artemmarkaryan/fisha/facade/internal/config"
+	"github.com/artemmarkaryan/fisha/facade/internal/cron/recommendation"
 	"github.com/artemmarkaryan/fisha/facade/pkg/database"
 	"github.com/artemmarkaryan/fisha/facade/pkg/logy"
 	_ "github.com/joho/godotenv/autoload"
@@ -19,7 +21,10 @@ func main() {
 		log.Fatalln("unable to connect to database: ", err)
 	}
 
-	new(recommendation.Cron).Process(ctx)
+	defer func(t time.Time) { logy.Log(ctx).Debugf("rec-s cron; elapsed: %v", time.Since(t)) }(time.Now())
+	if err = new(recommendation.Cron).Process(ctx); err != nil {
+		logy.Log(ctx).Errorf("error at rec-s cron: %q", err)
+	}
 }
 
 func initLogger(ctx context.Context) context.Context {

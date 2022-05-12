@@ -19,10 +19,9 @@ func (Service) ByUserIds(ctx context.Context, uId []int64) (ui []UserInterest, e
 	defer c()
 
 	q, a, err := sq.
-		Select("i.*").
-		From("user_interest ui").
-		InnerJoin("interest i on ui.interest_id = i.id").
-		Where(sq.Eq{"ui.user_id": uId}).
+		Select("*").
+		From("user_interest").
+		Where(sq.Eq{"user_id": uId}).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {

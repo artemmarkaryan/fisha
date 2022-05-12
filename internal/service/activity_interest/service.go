@@ -19,10 +19,9 @@ func (Service) ByActivityIds(ctx context.Context, uId []int64) (ui []ActivityInt
 	defer c()
 
 	q, a, err := sq.
-		Select("i.*").
-		From("activity_interest ai").
-		InnerJoin("interest i on ai.interest_id = i.id").
-		Where(sq.Eq{"ai.activity_id": uId}).
+		Select("*").
+		From("activity_interest").
+		Where(sq.Eq{"activity_id": uId}).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {

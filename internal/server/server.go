@@ -35,6 +35,7 @@ func (s Server) Serve(ctx context.Context) (err error) {
 func (s Server) registerHandlers(ctx context.Context, m *alien.Mux) (nm *alien.Mux, err error) {
 	for _, err = range []error{
 		m.Get("/interests", s.interests(ctx)),
+		m.Post("/login", s.login(ctx)),
 	} {
 		if err != nil {
 			return nil, err

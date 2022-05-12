@@ -8,9 +8,11 @@ import (
 	"github.com/artemmarkaryan/fisha/facade/internal/service/user"
 )
 
-const userBatch = 100
-const userActivityDistance = 50 * 1000 // 50 km
-const nearActivitiesLimit = 20
+const (
+	userBatch            uint64 = 100
+	nearActivitiesLimit  uint64 = 20
+	userActivityDistance int    = 50 * 1000 // 50 km
+)
 
 type Cron struct {
 	user     user.Service
@@ -18,36 +20,42 @@ type Cron struct {
 	r12n     recommendation.Service
 }
 
-func (c Cron) Process(ctx context.Context) {
+func (c Cron) Process(ctx context.Context) error {
 	var lastUserId int64
 
 	for {
 		users, err := c.user.GetBatch(ctx, lastUserId, userBatch)
 		if err != nil {
-			return
+			return err
 		}
 
 		var userIds = make([]int64, 0, len(users))
-		var r12ns = make([]recommendation.R12n, 0, len(users))
+		var r12ns = make([]recommendation.R12n, 0, len(users)*int(nearActivitiesLimit))
 		for _, u := range users {
+			if u.LastLocationLon == 0 && u.LastLocationLat == 0 {
+				continue
+			}
 			userIds = append(userIds, u.Id)
 
-			as, err := c.activity.GetNear(ctx, u.LastLocationLon, u.LastLocationLat, userActivityDistance)
+			var activities []activity.Activity
+			activities, err = c.activity.GetNear(ctx, u.LastLocationLon, u.LastLocationLat, userActivityDistance, nearActivitiesLimit)
 			if err != nil {
-				return
+				return err
 			}
 
-			for _, a := range as {
+			for _, a := range activities {
 				r12ns = append(r12ns, recommendation.R12n{UserId: u.Id, ActivityId: a.Id})
 			}
 		}
 
 		if err = c.r12n.Calculate(ctx, r12ns); err != nil {
-			return
+			return err
 		}
 
-		if len(users) < userBatch {
+		if len(users) < int(userBatch) {
 			break
 		}
 	}
+
+	return nil
 }

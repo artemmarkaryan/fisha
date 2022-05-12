@@ -9,7 +9,7 @@ import (
 
 type repo struct{}
 
-func (repo) getNear(ctx context.Context, lon, lat float32, distanceMeters int) (as []Activity, err error) {
+func (repo) getNear(ctx context.Context, lon, lat float64, distanceMeters int, limit uint64) (as []Activity, err error) {
 	dbp, err := database.Get(ctx)
 	if err != nil {
 		return
@@ -22,6 +22,7 @@ func (repo) getNear(ctx context.Context, lon, lat float32, distanceMeters int) (
 		Select("*").
 		From("activity a").
 		Where(sq.Expr("earth_distance(ll_to_earth(a.lon, a.lat), ll_to_earth(?, ?)) < ?", lon, lat, distanceMeters)).
+		Limit(limit).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {

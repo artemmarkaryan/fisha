@@ -4,11 +4,12 @@ package api;
 option go_package = "gen/api";
 
 service API {
-    rpc Interests(EmptyRequest) returns (InterestsRespose);
+    rpc Interests(EmptyMessage) returns (InterestsRespose);
     rpc Login(UserIdRequest) returns (LoginResponse);
+    rpc React(ReactRequest) returns (EmptyMessage);
 }
 
-message EmptyRequest {}
+message EmptyMessage {}
 
 message InterestsRespose{
     repeated string interest = 1;
@@ -20,4 +21,16 @@ message UserIdRequest {
 
 message LoginResponse {
     bool new = 1;
+}
+
+message ReactRequest {
+    enum Reaction {
+        UNKNOWN = 0;
+        LIKE = 1;
+        DISLIKE = 2;
+    }
+
+    int64 user_id = 1;
+    int64 activity_id = 2;
+    Reaction reaction = 3;
 }

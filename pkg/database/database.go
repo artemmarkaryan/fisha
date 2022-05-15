@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/artemmarkaryan/fisha-facade/pkg/logy"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
@@ -39,8 +38,6 @@ func check(ctx context.Context, cfg Config) error {
 	if err = db.Ping(); err != nil {
 		return err
 	}
-
-	logy.Log(ctx).Infoln("connected to database")
 
 	return nil
 }

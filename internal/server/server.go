@@ -2,8 +2,11 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"os"
 
+	"github.com/artemmarkaryan/fisha-facade/internal/config"
 	"github.com/artemmarkaryan/fisha-facade/internal/service/interest"
 	"github.com/artemmarkaryan/fisha-facade/internal/service/user"
 	"github.com/artemmarkaryan/fisha-facade/pkg/logy"
@@ -27,8 +30,8 @@ func (s Server) Serve(ctx context.Context) (err error) {
 	}
 
 	logy.Log(ctx).Infoln("Running server...")
-	if err = http.ListenAndServe(":8090", m); err != nil {
-		return
+	if err = http.ListenAndServe(":"+os.Getenv(config.ServerPort), m); err != nil {
+		return fmt.Errorf("running server error: %w", err)
 	}
 
 	return nil

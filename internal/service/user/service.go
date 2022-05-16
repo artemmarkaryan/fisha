@@ -60,3 +60,18 @@ func (Service) Login(ctx context.Context, user int64) (isNew bool, err error) {
 
 	return true, err
 }
+
+func (Service) Forget(ctx context.Context, user int64) error {
+	db, c, err := database.Get(ctx)()
+	defer c()
+
+	q, a, err := sq.
+		Delete(`"user"`).
+		Where(sq.Eq{"id": user}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+
+	_, err = db.ExecContext(ctx, q, a...)
+
+	return err
+}

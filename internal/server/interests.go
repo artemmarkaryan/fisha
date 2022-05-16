@@ -18,6 +18,6 @@ func (s Server) interests(ctx context.Context) handler {
 			network.WriteError(w, err.Error(), 500)
 		}
 
-		network.Write(w, i)
+		network.Write(w, api.InterestsResponse{Interest: i})
 	}
 }

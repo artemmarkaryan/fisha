@@ -4,14 +4,15 @@ package api;
 option go_package = "gen/api";
 
 service API {
-    rpc Interests(EmptyMessage) returns (InterestsRespose);
+    rpc Interests(EmptyMessage) returns (InterestsResponse);
     rpc Login(UserIdRequest) returns (LoginResponse);
     rpc React(ReactRequest) returns (EmptyMessage);
+    rpc Forget(UserIdRequest) returns (EmptyMessage);
 }
 
 message EmptyMessage {}
 
-message InterestsRespose{
+message InterestsResponse{
     repeated string interest = 1;
 }
 

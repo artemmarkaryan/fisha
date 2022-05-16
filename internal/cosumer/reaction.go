@@ -18,9 +18,13 @@ func HandleReaction(ctx context.Context, stop chan struct{}) {
 	svc := new(reaction.Service)
 
 	logy.Log(ctx).Infoln("running reaction consumer ...")
-	for t := range objs {
-		if err = svc.Calculate(ctx, t); err != nil {
-			logy.Log(ctx).Errorf("cant calculare reaction: %q", err)
+	for r := range objs {
+		if err = svc.Calculate(ctx, r); err != nil {
+			logy.Log(ctx).Errorf("cant calculate reaction: %q", err)
+		} else {
+			logy.Log(ctx).Debugf("reaction effect calculated: user: %v, activity: %v, reaction: %v", r.UserID, r.ActivityID, r.Reaction)
 		}
 	}
+
+	logy.Log(ctx).Infoln("running reaction consumer finished")
 }

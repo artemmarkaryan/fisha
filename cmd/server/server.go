@@ -69,6 +69,7 @@ func initRabbit(ctx context.Context) (ctx2 context.Context, err error) {
 		Port:     os.Getenv(config.RabbitPortKey),
 		User:     os.Getenv(config.RabbitUserKey),
 		Password: os.Getenv(config.RabbitPasswordKey),
+		QNames:   []string{config.ReactionQueueName},
 	})
 
 	logy.Log(ctx).Infoln("connected to rabbitmq")

@@ -2,6 +2,7 @@ package reaction
 
 import (
 	"context"
+	"fmt"
 	"math"
 	"time"
 
@@ -14,14 +15,18 @@ const coefficient float64 = 0.05
 type Service struct{}
 
 func (Service) Calculate(ctx context.Context, reaction Reaction) (err error) {
+	if !ValidateReactionType(reaction.Reaction) {
+		return fmt.Errorf("unknwown reaction type: %s", reaction.Reaction)
+	}
+
 	userInterests, err := new(ui.Service).ByUserIds(ctx, []int64{reaction.UserID})
 	if err != nil {
-		return
+		return fmt.Errorf("cant get user interests: %w", err)
 	}
 
 	activityInterests, err := new(ai.Service).ByActivityIds(ctx, []int64{reaction.ActivityID})
 	if err != nil {
-		return
+		return fmt.Errorf("cant get activity interests: %w", err)
 	}
 
 	interestsSet := calcInterestsSet(userInterests, activityInterests)
@@ -45,7 +50,12 @@ func (Service) Calculate(ctx context.Context, reaction Reaction) (err error) {
 			activityInterestRank = r.Rank
 		}
 
-		newUserInterestRank, newActivityInterestRank := calcNewRanks(userInterestRank, activityInterestRank, coefficient)
+		c := coefficient
+		if reaction.Reaction == ReactionTypeDislike {
+			c = -c // dislike will shift the weigths in opposite direction
+		}
+
+		newUserInterestRank, newActivityInterestRank := calcNewRanks(userInterestRank, activityInterestRank, c)
 		newUserInterests = append(newUserInterests, ui.UserInterest{
 			UserId:     reaction.UserID,
 			InterestId: interestID,
@@ -62,11 +72,11 @@ func (Service) Calculate(ctx context.Context, reaction Reaction) (err error) {
 	}
 
 	if err = new(ui.Service).Upsert(ctx, newUserInterests); err != nil {
-		return err
+		return fmt.Errorf("cant upsert user interests: %w", err)
 	}
 
 	if err = new(ai.Service).Upsert(ctx, newActivityInterests); err != nil {
-		return err
+		return fmt.Errorf("cant upsert activity interests: %w", err)
 	}
 
 	return nil

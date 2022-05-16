@@ -17,9 +17,13 @@ type Config struct {
 	Port     string
 	User     string
 	Password string
+	QNames   []string
 }
 
-type ConnecitonProvider func() *amqp.Connection
+type Rabbit struct {
+	*amqp.Channel
+	q map[string]amqp.Queue
+}
 
 func (c Config) dialString() string {
 	return fmt.Sprintf("amqp://%v:%v@%v:%v/", c.User, c.Password, c.Host, c.Port)
@@ -28,17 +32,33 @@ func (c Config) dialString() string {
 func Init(ctx context.Context, cfg Config) (context.Context, error) {
 	conn, err := amqp.Dial(cfg.dialString())
 	if err != nil {
-		return ctx, err
+		return ctx, fmt.Errorf("cant create connection: %w", err)
 	}
 
-	var cp ConnecitonProvider = func() *amqp.Connection { return conn }
+	r := new(Rabbit)
+	r.Channel, err = conn.Channel()
+	if err != nil {
+		return ctx, fmt.Errorf("cant get connection channel: %w", err)
+	}
 
-	return context.WithValue(ctx, rabbitKey, cp), err
+	r.q = make(map[string]amqp.Queue, len(cfg.QNames))
+	for _, name := range cfg.QNames {
+		r.q[name], err = r.Channel.QueueDeclare(
+			name,
+			false,
+			false,
+			false,
+			false,
+			nil,
+		)
+	}
+
+	return context.WithValue(ctx, rabbitKey, *r), err
 }
 
-func Get(ctx context.Context) ConnecitonProvider {
+func Get(ctx context.Context) Rabbit {
 	v := ctx.Value(rabbitKey)
-	c, ok := v.(ConnecitonProvider)
+	c, ok := v.(Rabbit)
 	if !ok {
 		panic(fmt.Errorf(rabbitKey+" has wrong type: %[1]v %[1]T", v))
 	}
@@ -46,66 +66,50 @@ func Get(ctx context.Context) ConnecitonProvider {
 	return c
 }
 
-func withQ(ctx context.Context, qName string, f func(*amqp.Channel, amqp.Queue) error) error {
-	conn := Get(ctx)()
-	defer func() { _ = conn.Close() }()
-
-	channel, err := conn.Channel()
-	if err != nil {
-		return err
+func Produce(ctx context.Context, qName string, data []byte) error {
+	rabbit := Get(ctx)
+	if _, ok := rabbit.q[qName]; !ok {
+		return fmt.Errorf("queue named %q not declared", qName)
 	}
 
-	defer func() { _ = channel.Close() }()
-
-	q, err := channel.QueueDeclare(
+	return rabbit.Publish(
+		"",
 		qName,
+		true,
 		false,
+		amqp.Publishing{
+			ContentType: "text/json",
+			Body:        data,
+		},
+	)
+}
+
+func Consume[T any](ctx context.Context, qName string, stop chan struct{}) (chan T, error) {
+	var objs = make(chan T, bufSize)
+
+	rabbit := Get(ctx)
+	if _, ok := rabbit.q[qName]; !ok {
+		return nil, fmt.Errorf("queue named %q not declared", qName)
+	}
+
+	msgs, err := rabbit.Consume(
+		qName,
+		"",
+		true,
 		false,
 		false,
 		false,
 		nil,
 	)
 	if err != nil {
-		return err
+		return nil, fmt.Errorf("cant enable consumer: %w", err)
 	}
 
-	return f(channel, q)
-}
-
-func Produce(ctx context.Context, qName string, data []byte) error {
-	return withQ(ctx, qName, func(ch *amqp.Channel, q amqp.Queue) error {
-		return ch.Publish(
-			"",
-			q.Name,
-			false,
-			false,
-			amqp.Publishing{
-				ContentType: "text/json",
-				Body:        data,
-			})
-	})
-}
-
-func Consume[T any](ctx context.Context, qName string, stop chan struct{}) (chan T, error) {
-	var objs = make(chan T, bufSize)
-
-	err := withQ(ctx, qName, func(ch *amqp.Channel, q amqp.Queue) error {
-		msgs, err := ch.Consume(
-			q.Name,
-			"",
-			true,
-			false,
-			false,
-			false,
-			nil,
-		)
-		if err != nil {
-			return err
-		}
-
-		go func() {
+	go func() {
+		for {
 			select {
 			case <-stop:
+				logy.Log(ctx).Infoln("shutting consumer...")
 				return
 			case d := <-msgs:
 				var obj T
@@ -116,14 +120,8 @@ func Consume[T any](ctx context.Context, qName string, stop chan struct{}) (chan
 
 				objs <- obj
 			}
-		}()
-
-		return nil
-	})
-
-	if err != nil {
-		return nil, err
-	}
+		}
+	}()
 
 	return objs, nil
 }

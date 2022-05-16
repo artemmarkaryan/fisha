@@ -15,32 +15,23 @@ func Test_calcNewRanks(t *testing.T) {
 		wantNewActivityRank float64
 	}{
 		{
-			name: "1",
+			name: "like",
 			args: args{
 				userRank:     1,
 				activityRank: -1,
-				k:            0.1,
-			},
-			wantNewUserRank:     0.8,
-			wantNewActivityRank: -0.8,
-		}, {
-			name: "1",
-			args: args{
-				userRank:     1,
-				activityRank: -1,
-				k:            0.5,
-			},
-			wantNewUserRank:     0,
-			wantNewActivityRank: 0,
-		}, {
-			name: "1",
-			args: args{
-				userRank:     1,
-				activityRank: 0,
-				k:            0.1,
+				k:            0.05,
 			},
 			wantNewUserRank:     0.9,
-			wantNewActivityRank: 0.1,
+			wantNewActivityRank: -0.9,
+		}, {
+			name: "dislike",
+			args: args{
+				userRank:     0.9,
+				activityRank: -0.9,
+				k:            -0.05,
+			},
+			wantNewUserRank:     0.99,
+			wantNewActivityRank: -0.99,
 		},
 	}
 	for _, tt := range tests {

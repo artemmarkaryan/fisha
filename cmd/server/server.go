@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"log"
 	"os"
 
 	"github.com/artemmarkaryan/fisha-facade/internal/config"
+	consumer "github.com/artemmarkaryan/fisha-facade/internal/cosumer"
 	"github.com/artemmarkaryan/fisha-facade/internal/server"
 	"github.com/artemmarkaryan/fisha-facade/pkg/database"
 	"github.com/artemmarkaryan/fisha-facade/pkg/logy"
@@ -14,24 +14,33 @@ import (
 )
 
 func main() {
+	ctx := initDeps()
+
+	s := new(server.Server)
+
+	go consumer.HandleReaction(ctx, make(chan struct{}, 1))
+
+	if err := s.Serve(ctx); err != nil {
+		logy.Log(ctx).Errorf("failed to serve: %w", err)
+	}
+
+}
+
+func initDeps() context.Context {
 	var ctx = context.Background()
 	var err error
 
 	ctx = initLogger(ctx)
 
 	if ctx, err = initDatabase(ctx); err != nil {
-		log.Fatalln("unable to connect to database: ", err)
+		panic("unable to connect to database: " + err.Error())
 	}
 
 	if ctx, err = initRabbit(ctx); err != nil {
-		log.Fatalln("unable to connect to RabbitMQ: ", err)
+		panic("unable to connect to RabbitMQ: " + err.Error())
 	}
 
-	s := new(server.Server)
-
-	if err = s.Serve(ctx); err != nil {
-		logy.Log(ctx).Errorf("failed to serve: %w", err)
-	}
+	return ctx
 }
 
 func initLogger(ctx context.Context) context.Context {

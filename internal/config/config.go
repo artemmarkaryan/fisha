@@ -13,4 +13,6 @@ const (
 	RabbitPortKey     = "RABBIT_PORT"
 	RabbitUserKey     = "RABBIT_USER"
 	RabbitPasswordKey = "RABBIT_PASSWORD"
+
+	ReactionQueueName = "reaction"
 )

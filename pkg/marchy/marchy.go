@@ -31,7 +31,11 @@ func Obj[T protoMsg](ctx context.Context, r io.ReadCloser) (o T, err error) {
 		return o, nil
 	}
 
-	err = json.Unmarshal(b, &o)
+	if err = json.Unmarshal(b, &o); err != nil {
+		logy.Log(ctx).Errorf("unmarshalling error: ", err)
+
+		return o, err
+	}
 
 	return
 }

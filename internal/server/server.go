@@ -29,7 +29,7 @@ func (s Server) Serve(ctx context.Context) (err error) {
 		return
 	}
 
-	logy.Log(ctx).Infoln("Running server...")
+	logy.Log(ctx).Infoln("Running server at " + os.Getenv(config.ServerPort) + "...")
 	if err = http.ListenAndServe(":"+os.Getenv(config.ServerPort), m); err != nil {
 		return fmt.Errorf("running server error: %w", err)
 	}

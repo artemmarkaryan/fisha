@@ -6,9 +6,13 @@ import (
 	"github.com/artemmarkaryan/fisha-facade/pkg/marchy"
 )
 
-func WriteInternalError(w http.ResponseWriter, err error) {
+func InternalError(w http.ResponseWriter) {
 	w.WriteHeader(500)
-	_, _ = w.Write([]byte("internal: " + err.Error()))
+}
+
+func WriteBadRequestError(w http.ResponseWriter, text string) {
+	w.WriteHeader(400)
+	_, _ = w.Write([]byte("bad request: " + text))
 }
 
 func WriteError(w http.ResponseWriter, text string, code int) {

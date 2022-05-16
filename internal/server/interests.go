@@ -13,11 +13,19 @@ func (s Server) interests(ctx context.Context) handler {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, _ = marchy.Obj[*api.EmptyMessage](ctx, r.Body)
 
-		i, err := s.interestSvc.Names(ctx)
+		interests, err := s.interestSvc.List(ctx)
 		if err != nil {
 			network.WriteError(w, err.Error(), 500)
 		}
 
-		network.Write(w, api.InterestsResponse{Interest: i})
+		response := api.InterestsResponse{}
+		for _, interest := range interests {
+			response.Interest = append(response.Interest, &api.InterestsResponse_Interest{
+				Id:   interest.Id,
+				Name: interest.Name,
+			})
+		}
+
+		network.Write(w, &response)
 	}
 }

@@ -9,7 +9,7 @@ import (
 
 type Service struct{}
 
-func (Service) Names(ctx context.Context) (i []string, err error) {
+func (Service) List(ctx context.Context) (i []Interest, err error) {
 	db, c, err := database.Get(ctx)()
 	if err != nil {
 		return nil, err
@@ -17,7 +17,7 @@ func (Service) Names(ctx context.Context) (i []string, err error) {
 
 	defer c()
 
-	q, a, err := sq.Select("name").From("interest").PlaceholderFormat(sq.Dollar).ToSql()
+	q, a, err := sq.Select("*").From("interest").PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		return nil, err
 	}

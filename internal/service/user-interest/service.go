@@ -2,6 +2,7 @@ package user_interest
 
 import (
 	"context"
+	"database/sql"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/artemmarkaryan/fisha-facade/pkg/database"
@@ -50,4 +51,38 @@ func (Service) Upsert(ctx context.Context, interests []UserInterest) (err error)
 	}
 
 	return nil
+}
+
+func (Service) Insert(ctx context.Context, ui UserInterest) (inserted bool, err error) {
+	db, c, err := database.Get(ctx)()
+	defer c()
+
+	var q string
+	var a []interface{}
+
+	q, a, err = sq.
+		Insert("user_interest").
+		Columns("user_id", "interest_id", "rank", "created_at", "updated_at").
+		Values(ui.UserId, ui.InterestId, ui.Rank, ui.CreatedAt, ui.UpdatedAt).
+		Suffix("on conflict do nothing").
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return
+	}
+
+	var r sql.Result
+	r, err = db.ExecContext(ctx, q, a...)
+	if err != nil {
+		return
+	}
+
+	insertedAmt, err := r.RowsAffected()
+	if err != nil {
+		return
+	}
+
+	inserted = insertedAmt > 0
+
+	return
 }

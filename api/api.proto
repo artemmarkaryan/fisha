@@ -4,13 +4,19 @@ package api;
 option go_package = "gen/api";
 
 service API {
+    rpc AddInterest(AddInterestRequest) returns (IsNewMessage);
     rpc Interests(EmptyMessage) returns (InterestsResponse);
-    rpc Login(UserIdRequest) returns (LoginResponse);
+    rpc Login(UserIdRequest) returns (IsNewMessage);
     rpc React(ReactRequest) returns (EmptyMessage);
     rpc Forget(UserIdRequest) returns (EmptyMessage);
 }
 
 message EmptyMessage {}
+
+message AddInterestRequest {
+    int64 interest_id = 1;
+    int64 user_id = 2;
+}
 
 message InterestsResponse{
     message Interest {
@@ -25,7 +31,7 @@ message UserIdRequest {
     int64 user_id = 1;
 }
 
-message LoginResponse {
+message IsNewMessage {
     bool new = 1;
 }
 

@@ -27,6 +27,6 @@ func (s Server) login(ctx context.Context) handler {
 			return
 		}
 
-		network.Write(w, api.LoginResponse{New: isNew})
+		network.Write(w, api.IsNewMessage{New: isNew})
 	}
 }

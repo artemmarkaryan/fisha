@@ -4,15 +4,12 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/artemmarkaryan/fisha-facade/pkg/marchy"
 	"github.com/artemmarkaryan/fisha-facade/pkg/network"
 	"github.com/artemmarkaryan/fisha-facade/pkg/pb/gen/api"
 )
 
 func (s Server) interests(ctx context.Context) handler {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, _ = marchy.Obj[*api.EmptyMessage](ctx, r.Body)
-
 		interests, err := s.interestSvc.List(ctx)
 		if err != nil {
 			network.WriteError(w, err.Error(), 500)

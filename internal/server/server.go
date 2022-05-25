@@ -9,6 +9,7 @@ import (
 	"github.com/artemmarkaryan/fisha-facade/internal/config"
 	"github.com/artemmarkaryan/fisha-facade/internal/service/interest"
 	"github.com/artemmarkaryan/fisha-facade/internal/service/user"
+	ui "github.com/artemmarkaryan/fisha-facade/internal/service/user-interest"
 	"github.com/artemmarkaryan/fisha-facade/pkg/logy"
 	"github.com/gernest/alien"
 )
@@ -16,8 +17,9 @@ import (
 const module = "server"
 
 type Server struct {
-	interestSvc interest.Service
-	userSvc     user.Service
+	interestSvc     interest.Service
+	userSvc         user.Service
+	userInterestSvc ui.Service
 }
 
 type handler func(w http.ResponseWriter, r *http.Request)
@@ -43,6 +45,7 @@ func (s Server) registerHandlers(ctx context.Context, m *alien.Mux) (nm *alien.M
 		m.Post("/login", s.login(ctx)),
 		m.Post("/react", s.react(ctx)),
 		m.Post("/forget", s.forget(ctx)),
+		m.Post("/addInterest", s.addInterest(ctx)),
 	} {
 		if err != nil {
 			return nil, err

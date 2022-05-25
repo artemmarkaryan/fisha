@@ -11,17 +11,17 @@ import (
 
 func (s Server) login(ctx context.Context) handler {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userIdReq, err := marchy.Obj[*api.UserIdRequest](ctx, r.Body)
+		userIdReq, err := marchy.Obj[*api.IdMessage](ctx, r.Body)
 		if err != nil {
 			network.WriteError(w, "internal: "+err.Error(), 500)
 			return
 		}
-		if userIdReq.GetUserId() == 0 {
+		if userIdReq.GetId() == 0 {
 			network.WriteError(w, "bad user_id", 400)
 			return
 		}
 
-		isNew, err := s.userSvc.Login(ctx, userIdReq.GetUserId())
+		isNew, err := s.userSvc.Login(ctx, userIdReq.GetId())
 		if err != nil {
 			network.WriteError(w, "cant login: "+err.Error(), 500)
 			return

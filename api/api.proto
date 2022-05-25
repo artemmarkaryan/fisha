@@ -6,9 +6,10 @@ option go_package = "gen/api";
 service API {
     rpc AddInterest(AddInterestRequest) returns (IsNewMessage);
     rpc Interests(EmptyMessage) returns (InterestsResponse);
-    rpc Login(UserIdRequest) returns (IsNewMessage);
+    rpc InterestById(IdMessage) returns (StringMessage);
+    rpc Login(IdMessage) returns (IsNewMessage);
     rpc React(ReactRequest) returns (EmptyMessage);
-    rpc Forget(UserIdRequest) returns (EmptyMessage);
+    rpc Forget(IdMessage) returns (EmptyMessage);
 }
 
 message EmptyMessage {}
@@ -27,8 +28,12 @@ message InterestsResponse{
     repeated Interest interest = 1;
 }
 
-message UserIdRequest {
-    int64 user_id = 1;
+message IdMessage {
+    int64 id = 1;
+}
+
+message StringMessage {
+    string s = 1;
 }
 
 message IsNewMessage {

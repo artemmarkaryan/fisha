@@ -14,8 +14,6 @@ import (
 	"github.com/gernest/alien"
 )
 
-const module = "server"
-
 type Server struct {
 	interestSvc     interest.Service
 	userSvc         user.Service
@@ -42,6 +40,7 @@ func (s Server) Serve(ctx context.Context) (err error) {
 func (s Server) registerHandlers(ctx context.Context, m *alien.Mux) (nm *alien.Mux, err error) {
 	for _, err = range []error{
 		m.Get("/interests", s.interests(ctx)),
+		m.Get("/interest-by-id", s.interestById(ctx)),
 		m.Post("/login", s.login(ctx)),
 		m.Post("/react", s.react(ctx)),
 		m.Post("/forget", s.forget(ctx)),

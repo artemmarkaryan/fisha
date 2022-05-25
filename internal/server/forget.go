@@ -12,17 +12,17 @@ import (
 
 func (s Server) forget(ctx context.Context) handler {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userIdReq, err := marchy.Obj[*api.UserIdRequest](ctx, r.Body)
+		userIdReq, err := marchy.Obj[*api.IdMessage](ctx, r.Body)
 		if err != nil {
 			network.InternalError(w)
 			return
 		}
-		if userIdReq.GetUserId() == 0 {
+		if userIdReq.GetId() == 0 {
 			network.WriteBadRequestError(w, "bad user_id")
 			return
 		}
 
-		if err = s.userSvc.Forget(ctx, userIdReq.GetUserId()); err != nil {
+		if err = s.userSvc.Forget(ctx, userIdReq.GetId()); err != nil {
 			logy.Log(ctx).Errorf("cant forget user: %v", err)
 			network.InternalError(w)
 			return

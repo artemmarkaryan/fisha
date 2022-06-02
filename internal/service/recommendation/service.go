@@ -4,6 +4,7 @@ import (
 	"context"
 	"math"
 
+	"github.com/artemmarkaryan/fisha-facade/internal/service/activity"
 	ai "github.com/artemmarkaryan/fisha-facade/internal/service/activity_interest"
 	ui "github.com/artemmarkaryan/fisha-facade/internal/service/user-interest"
 )
@@ -92,4 +93,8 @@ func keys[K comparable](m map[K]struct{}) (r []K) {
 	}
 
 	return
+}
+
+func (Service) Get(ctx context.Context, user int64) (activity.Activity, error) {
+
 }

@@ -43,5 +43,5 @@ func (Service) Get(ctx context.Context, id int64) (i Interest, err error) {
 		return
 	}
 
-	return i, db.SelectContext(ctx, &i, q, a...)
+	return i, db.GetContext(ctx, &i, q, a...)
 }

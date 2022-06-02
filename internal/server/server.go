@@ -8,6 +8,7 @@ import (
 
 	"github.com/artemmarkaryan/fisha-facade/internal/config"
 	"github.com/artemmarkaryan/fisha-facade/internal/service/interest"
+	"github.com/artemmarkaryan/fisha-facade/internal/service/recommendation"
 	"github.com/artemmarkaryan/fisha-facade/internal/service/user"
 	ui "github.com/artemmarkaryan/fisha-facade/internal/service/user-interest"
 	"github.com/artemmarkaryan/fisha-facade/pkg/logy"
@@ -18,6 +19,7 @@ type Server struct {
 	interestSvc     interest.Service
 	userSvc         user.Service
 	userInterestSvc ui.Service
+	r12nSvc         recommendation.Service
 }
 
 type handler func(w http.ResponseWriter, r *http.Request)
@@ -40,7 +42,7 @@ func (s Server) Serve(ctx context.Context) (err error) {
 func (s Server) registerHandlers(ctx context.Context, m *alien.Mux) (nm *alien.Mux, err error) {
 	for _, err = range []error{
 		m.Get("/interests", s.interests(ctx)),
-		m.Get("/interest-by-id", s.interestById(ctx)),
+		m.Post("/interest-by-id", s.interestById(ctx)),
 		m.Post("/login", s.login(ctx)),
 		m.Post("/react", s.react(ctx)),
 		m.Post("/forget", s.forget(ctx)),

@@ -21,6 +21,6 @@ func (s Server) interestById(ctx context.Context) handler {
 			network.WriteError(w, err.Error(), 500)
 		}
 
-		network.Write(w, marchy.Force(api.StringMessage{S: interest.Name}))
+		network.Write(w, api.StringMessage{S: interest.Name})
 	}
 }

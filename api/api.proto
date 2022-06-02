@@ -10,6 +10,7 @@ service API {
     rpc Login(IdMessage) returns (IsNewMessage);
     rpc React(ReactRequest) returns (EmptyMessage);
     rpc Forget(IdMessage) returns (EmptyMessage);
+    rpc Recommend(IdMessage) returns (ActivityMessage);
 }
 
 message EmptyMessage {}
@@ -50,4 +51,12 @@ message ReactRequest {
     int64 user_id = 1;
     int64 activity_id = 2;
     Reaction reaction = 3;
+}
+
+message ActivityMessage {
+    int64 id = 1;
+    string name = 2;
+    string address = 3;
+    string url = 4;
+    map<string, string> meta = 5;
 }

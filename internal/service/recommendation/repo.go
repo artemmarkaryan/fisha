@@ -35,3 +35,19 @@ func (repo) Upsert(ctx context.Context, recs []R12n) error {
 
 	return nil
 }
+
+func (repo) Get(ctx context.Context, user int64) (activity int64, err error) {
+	db, c, err := database.Get(ctx)()
+	if err != nil {
+		return
+	}
+
+	defer c()
+
+	db.GetContext(ctx, &activity, sq.
+		Select("activity_id").
+		From("recommendations").
+		Where(sq.Eq{"user_id": user}).
+		PlaceholderFormat(sq.Dollar)
+	)
+}

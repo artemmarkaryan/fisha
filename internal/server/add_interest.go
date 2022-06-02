@@ -22,6 +22,7 @@ func (s Server) addInterest(ctx context.Context) handler {
 		inserted, err := s.userInterestSvc.Insert(ctx, ui.UserInterest{
 			UserId:     o.GetUserId(),
 			InterestId: o.GetInterestId(),
+			Rank:       1,
 		})
 		if err != nil {
 			logy.Log(ctx).Errorf("error inserting user inerest: %w", err)

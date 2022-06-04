@@ -9,3 +9,7 @@ type User struct {
 	LastLocationLon *float64   `db:"last_location_lon"`
 	LastLocationLat *float64   `db:"last_location_lat"`
 }
+
+func (u User) ValidLocation() bool {
+	return u.LastLocationLon != nil && *u.LastLocationLon > 0 && u.LastLocationLat != nil && *u.LastLocationLat > 0
+}

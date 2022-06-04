@@ -9,22 +9,21 @@ import (
 
 type Service struct{}
 
-func (Service) GetBatch(ctx context.Context, from int64, limit uint64) (us []User, err error) {
+func (Service) Get(ctx context.Context, id int64) (us User, err error) {
 	db, c, err := database.Get(ctx)()
 	defer c()
 
 	q, a, err := sq.
 		Select("*").
 		From(`"user"`).
-		Where(sq.Gt{"id": from}).
-		Limit(limit).
+		Where(sq.Eq{"id": id}).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
 		return
 	}
 
-	err = db.SelectContext(ctx, &us, q, a...)
+	err = db.GetContext(ctx, &us, q, a...)
 
 	return
 }

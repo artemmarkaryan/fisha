@@ -46,7 +46,9 @@ func (s Server) registerHandlers(ctx context.Context, m *alien.Mux) (nm *alien.M
 		m.Post("/login", s.login(ctx)),
 		m.Post("/react", s.react(ctx)),
 		m.Post("/forget", s.forget(ctx)),
-		m.Post("/addInterest", s.addInterest(ctx)),
+		m.Post("/add-interest", s.addInterest(ctx)),
+		m.Post("/recommend", s.recommend(ctx)),
+		m.Post("/ack-recommendation", s.ackRecommendation(ctx)),
 	} {
 		if err != nil {
 			return nil, err

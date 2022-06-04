@@ -2,6 +2,7 @@ package recommendation
 
 import (
 	"context"
+	"database/sql"
 	"math"
 
 	"github.com/artemmarkaryan/fisha-facade/internal/service/activity"
@@ -43,7 +44,7 @@ func (Service) Calculate(ctx context.Context, recs []R12n) error {
 		recs[i].Rank = calculateRank(interestByUser[rec.UserId], interestByActivity[rec.ActivityId])
 	}
 
-	return new(repo).Upsert(ctx, recs)
+	return new(repo).upsert(ctx, recs)
 }
 
 func calculateInterestsCorrelation(userRank, activityRank float64) float64 {
@@ -95,6 +96,37 @@ func keys[K comparable](m map[K]struct{}) (r []K) {
 	return
 }
 
-func (Service) Get(ctx context.Context, user int64) (activity.Activity, error) {
+func (s Service) Get(ctx context.Context, user int64) (a activity.Activity, err error) {
+	if a, err = s.get(ctx, user); err != sql.ErrNoRows {
+		return
+	}
 
+	if err = NewProcessor(processorCfg{
+		limit:              100,
+		initialDistance:    20 * 1000,
+		distanceMultiplier: 1.5,
+		maxAttempts:        10,
+	}).Process(ctx, user); err != nil {
+		return
+	}
+
+	return s.get(ctx, user)
+}
+
+func (s Service) get(ctx context.Context, user int64) (a activity.Activity, err error) {
+	aID, err := new(repo).get(ctx, user)
+	if err != nil && err != sql.ErrNoRows { // error
+		return
+	}
+
+	if err == nil {
+		a, err = new(activity.Service).Get(ctx, aID)
+		return
+	}
+
+	return
+}
+
+func (s Service) Ack(ctx context.Context, user, activity int64) error {
+	return new(repo).ack(ctx, user, activity)
 }

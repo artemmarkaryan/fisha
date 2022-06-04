@@ -4,6 +4,10 @@ import "context"
 
 type Service struct{}
 
-func (Service) GetNear(ctx context.Context, lon, lat float64, distanceMeters int, limit uint64) ([]Activity, error) {
+func (Service) GetNear(ctx context.Context, lon, lat float64, distanceMeters float64, limit uint64) ([]Activity, error) {
 	return new(repo).getNear(ctx, lon, lat, distanceMeters, limit)
+}
+
+func (Service) Get(ctx context.Context, id int64) (Activity, error) {
+	return new(repo).get(ctx, id)
 }

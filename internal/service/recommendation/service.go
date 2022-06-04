@@ -96,13 +96,17 @@ func keys[K comparable](m map[K]struct{}) (r []K) {
 	return
 }
 
-func (s Service) Get(ctx context.Context, user int64) (a activity.Activity, err error) {
-	if a, err = s.get(ctx, user); err != sql.ErrNoRows {
+func (s Service) GetExistingActivities(ctx context.Context, user int64) ([]int64, error) {
+	return new(repo).getExistingActivities(ctx, user)
+}
+
+func (s Service) GetRecommendedActivity(ctx context.Context, user int64) (a activity.Activity, err error) {
+	if a, err = s.getRecommendedActivity(ctx, user); err != sql.ErrNoRows {
 		return
 	}
 
 	if err = NewProcessor(processorCfg{
-		limit:              100,
+		limit:              4,
 		initialDistance:    20 * 1000,
 		distanceMultiplier: 1.5,
 		maxAttempts:        10,
@@ -110,11 +114,11 @@ func (s Service) Get(ctx context.Context, user int64) (a activity.Activity, err 
 		return
 	}
 
-	return s.get(ctx, user)
+	return s.getRecommendedActivity(ctx, user)
 }
 
-func (s Service) get(ctx context.Context, user int64) (a activity.Activity, err error) {
-	aID, err := new(repo).get(ctx, user)
+func (s Service) getRecommendedActivity(ctx context.Context, user int64) (a activity.Activity, err error) {
+	aID, err := new(repo).getRecommendedActivity(ctx, user)
 	if err != nil && err != sql.ErrNoRows { // error
 		return
 	}

@@ -20,7 +20,7 @@ func (s Server) recommend(ctx context.Context) handler {
 		}
 
 		userID := reqObj.GetId()
-		a, err := s.r12nSvc.Get(ctx, userID)
+		a, err := s.r12nSvc.GetRecommendedActivity(ctx, userID)
 		if err != nil {
 			logy.Log(ctx).Errorf("getting recommendation err: %v", err)
 

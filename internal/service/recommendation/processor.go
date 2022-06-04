@@ -35,6 +35,11 @@ func (p processor) Process(ctx context.Context, userID int64) error {
 	distance := p.initialDistance
 	attempts := 0
 
+	currentR12n, err := new(Service).GetExistingActivities(ctx, userID)
+	if err != nil {
+		return err
+	}
+
 	for {
 		var r12ns = make([]R12n, 0, int(p.limit))
 		if !u.ValidLocation() {
@@ -42,7 +47,7 @@ func (p processor) Process(ctx context.Context, userID int64) error {
 		}
 
 		var activities []activity.Activity
-		activities, err = new(activity.Service).GetNear(ctx, *u.Lon, *u.Lat, distance, p.limit)
+		activities, err = new(activity.Service).GetNear(ctx, *u.Lon, *u.Lat, distance, p.limit, currentR12n)
 		if err != nil {
 			return fmt.Errorf("cant find relevant activities: %w", err)
 		}

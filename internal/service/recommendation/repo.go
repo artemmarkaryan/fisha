@@ -37,7 +37,7 @@ func (repo) upsert(ctx context.Context, recs []R12n) error {
 	return nil
 }
 
-func (repo) get(ctx context.Context, user int64) (activity int64, err error) {
+func (repo) getRecommendedActivity(ctx context.Context, user int64) (activity int64, err error) {
 	db, c, err := database.Get(ctx)()
 	if err != nil {
 		return
@@ -77,4 +77,25 @@ func (repo) ack(ctx context.Context, user, activity int64) error {
 	}
 
 	return err
+}
+
+func (repo) getExistingActivities(ctx context.Context, user int64) (as []int64, err error) {
+	db, c, err := database.Get(ctx)()
+	if err != nil {
+		return
+	}
+
+	defer func() { _ = c() }()
+
+	q, a, err := sq.
+		Select("activity_id").
+		From("recommendations").
+		Where(sq.Eq{"user_id": user}).
+		PlaceholderFormat(sq.Dollar).ToSql()
+
+	logy.Log(ctx).Debugln(q)
+
+	err = db.SelectContext(ctx, &as, q, a...)
+
+	return
 }

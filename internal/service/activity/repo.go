@@ -9,13 +9,20 @@ import (
 
 type repo struct{}
 
-func (repo) getNear(ctx context.Context, lon, lat float64, distanceMeters float64, limit uint64) (as []Activity, err error) {
+func (repo) getNear(
+	ctx context.Context,
+	lon, lat float64,
+	distanceMeters float64,
+	limit uint64,
+	exclude []int64,
+) (as []Activity, err error) {
 	db, c, err := database.Get(ctx)()
 	defer c()
 
 	q, a, err := sq.
 		Select("*").
 		From("activity a").
+		Where(sq.NotEq{"id": exclude}).
 		Where(sq.Expr("earth_distance(ll_to_earth(a.lon, a.lat), ll_to_earth(?, ?)) < ?", lon, lat, distanceMeters)).
 		Limit(limit).
 		PlaceholderFormat(sq.Dollar).

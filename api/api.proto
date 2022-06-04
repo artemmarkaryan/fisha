@@ -58,7 +58,7 @@ message ActivityMessage {
     int64 id = 1;
     string name = 2;
     string address = 3;
-    bytes meta = 4;
+    string meta = 4;
 }
 
 message AckRecommendationMessage {

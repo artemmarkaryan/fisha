@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"os"
+	"time"
 
 	log "github.com/amoghe/distillog"
 )
@@ -30,4 +31,8 @@ func New(ctx context.Context) context.Context {
 func Log(ctx context.Context) (l log.Logger) {
 	l, _ = ctx.Value(key).(log.Logger)
 	return
+}
+
+func Time(ctx context.Context, ts time.Time, what string) {
+	Log(ctx).Debugf("%v : %v", what, time.Since(ts))
 }

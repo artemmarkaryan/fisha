@@ -6,7 +6,7 @@ type Activity struct {
 	CreatedAt string  `db:"created_at"`
 	UpdatedAt string  `db:"updated_at"`
 	Address   string  `db:"address"`
-	Lon       float64 `db:"lon"`
-	Lat       float64 `db:"lat"`
+	Lon       float32 `db:"lon"`
+	Lat       float32 `db:"lat"`
 	Meta      string  `db:"meta"`
 }

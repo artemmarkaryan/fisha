@@ -59,6 +59,8 @@ message ActivityMessage {
     string name = 2;
     string address = 3;
     string meta = 4;
+    float lon = 5;
+    float lat = 6;
 }
 
 message AckRecommendationMessage {

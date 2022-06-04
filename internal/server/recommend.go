@@ -31,6 +31,8 @@ func (s Server) recommend(ctx context.Context) handler {
 			Name:    a.Name,
 			Address: a.Address,
 			Meta:    a.Meta,
+			Lon:     a.Lon,
+			Lat:     a.Lat,
 		})
 
 		return

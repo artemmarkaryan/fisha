@@ -9,6 +9,8 @@ import (
 	"github.com/artemmarkaryan/fisha-facade/internal/service/user"
 )
 
+var NoUserLocation = errors.New("no user location")
+
 type processorCfg struct {
 	limit              uint64
 	initialDistance    float64 // meters
@@ -36,11 +38,11 @@ func (p processor) Process(ctx context.Context, userID int64) error {
 	for {
 		var r12ns = make([]R12n, 0, int(p.limit))
 		if !u.ValidLocation() {
-			return errors.New("no user location")
+			return NoUserLocation
 		}
 
 		var activities []activity.Activity
-		activities, err = new(activity.Service).GetNear(ctx, *u.LastLocationLon, *u.LastLocationLat, distance, p.limit)
+		activities, err = new(activity.Service).GetNear(ctx, *u.Lon, *u.Lat, distance, p.limit)
 		if err != nil {
 			return fmt.Errorf("cant find relevant activities: %w", err)
 		}

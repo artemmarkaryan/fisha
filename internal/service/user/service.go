@@ -74,3 +74,23 @@ func (Service) Forget(ctx context.Context, user int64) error {
 
 	return err
 }
+
+func (Service) SetLocation(ctx context.Context, user int64, lon, lat float32) error {
+	db, c, err := database.Get(ctx)()
+	defer c()
+
+	q, a, err := sq.
+		Update(`"user"`).
+		Set("lon", lon).
+		Set("lat", lat).
+		Where(sq.Eq{"id": user}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return err
+	}
+
+	_, err = db.ExecContext(ctx, q, a...)
+
+	return err
+}

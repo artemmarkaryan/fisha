@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/artemmarkaryan/fisha-facade/internal/service/recommendation"
 	"github.com/artemmarkaryan/fisha-facade/pkg/logy"
 	"github.com/artemmarkaryan/fisha-facade/pkg/marchy"
 	"github.com/artemmarkaryan/fisha-facade/pkg/network"
@@ -22,6 +23,13 @@ func (s Server) recommend(ctx context.Context) handler {
 		a, err := s.r12nSvc.Get(ctx, userID)
 		if err != nil {
 			logy.Log(ctx).Errorf("getting recommendation err: %v", err)
+
+			if err == recommendation.NoUserLocation {
+				w.WriteHeader(http.StatusNotAcceptable)
+				_, _ = w.Write([]byte(recommendation.NoUserLocation.Error()))
+				return
+			}
+
 			network.InternalError(w)
 			return
 		}

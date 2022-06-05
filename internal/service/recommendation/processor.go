@@ -4,15 +4,18 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/artemmarkaryan/fisha-facade/internal/service/activity"
 	"github.com/artemmarkaryan/fisha-facade/internal/service/user"
+	"github.com/artemmarkaryan/fisha-facade/pkg/logy"
 )
 
 var NoUserLocation = errors.New("no user location")
 
 type processorCfg struct {
-	limit              uint64
+	findLimit          uint64
+	saveLimit          int
 	initialDistance    float64 // meters
 	distanceMultiplier float64
 	maxAttempts        int
@@ -27,6 +30,8 @@ func NewProcessor(processorCfg processorCfg) *processor {
 }
 
 func (p processor) Process(ctx context.Context, userID int64) error {
+	logy.Time(ctx, time.Now(), "recommendations processor")
+
 	u, err := new(user.Service).Get(ctx, userID)
 	if err != nil {
 		return fmt.Errorf("cant get user: %w", err)
@@ -41,13 +46,13 @@ func (p processor) Process(ctx context.Context, userID int64) error {
 	}
 
 	for {
-		var r12ns = make([]R12n, 0, int(p.limit))
+		var r12ns = make([]R12n, 0, int(p.findLimit))
 		if !u.ValidLocation() {
 			return NoUserLocation
 		}
 
 		var activities []activity.Activity
-		activities, err = new(activity.Service).GetNear(ctx, *u.Lon, *u.Lat, distance, p.limit, currentR12n)
+		activities, err = new(activity.Service).GetNear(ctx, *u.Lon, *u.Lat, distance, p.findLimit, currentR12n)
 		if err != nil {
 			return fmt.Errorf("cant find relevant activities: %w", err)
 		}
@@ -67,9 +72,8 @@ func (p processor) Process(ctx context.Context, userID int64) error {
 			r12ns = append(r12ns, R12n{UserId: u.Id, ActivityId: a.Id})
 		}
 
-		if err = new(Service).Calculate(ctx, r12ns); err != nil {
+		if err = new(Service).CalculateAndSave(ctx, r12ns, p.saveLimit); err != nil {
 			return fmt.Errorf("cant calculate recommendations: %w", err)
-
 		}
 
 		break

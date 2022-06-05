@@ -93,8 +93,6 @@ func (repo) getExistingActivities(ctx context.Context, user int64) (as []int64, 
 		Where(sq.Eq{"user_id": user}).
 		PlaceholderFormat(sq.Dollar).ToSql()
 
-	logy.Log(ctx).Debugln(q)
-
 	err = db.SelectContext(ctx, &as, q, a...)
 
 	return

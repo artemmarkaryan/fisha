@@ -4,15 +4,18 @@ import (
 	"context"
 	"database/sql"
 	"math"
+	"sort"
+	"time"
 
 	"github.com/artemmarkaryan/fisha-facade/internal/service/activity"
 	ai "github.com/artemmarkaryan/fisha-facade/internal/service/activity_interest"
 	ui "github.com/artemmarkaryan/fisha-facade/internal/service/user-interest"
+	"github.com/artemmarkaryan/fisha-facade/pkg/logy"
 )
 
 type Service struct{}
 
-func (Service) Calculate(ctx context.Context, recs []R12n) error {
+func (Service) CalculateAndSave(ctx context.Context, recs []R12n, limit int) error {
 	var uIds = make(map[int64]struct{}, len(recs))
 	var aIds = make(map[int64]struct{}, len(recs))
 	for _, rec := range recs {
@@ -43,8 +46,9 @@ func (Service) Calculate(ctx context.Context, recs []R12n) error {
 	for i, rec := range recs {
 		recs[i].Rank = calculateRank(interestByUser[rec.UserId], interestByActivity[rec.ActivityId])
 	}
+	sort.Slice(recs, func(i, j int) bool { return recs[i].Rank < recs[j].Rank })
 
-	return new(repo).upsert(ctx, recs)
+	return new(repo).upsert(ctx, recs[:limit])
 }
 
 func calculateInterestsCorrelation(userRank, activityRank float64) float64 {
@@ -101,13 +105,16 @@ func (s Service) GetExistingActivities(ctx context.Context, user int64) ([]int64
 }
 
 func (s Service) GetRecommendedActivity(ctx context.Context, user int64) (a activity.Activity, err error) {
+	logy.Time(ctx, time.Now(), "get recommendations service")
+
 	if a, err = s.getRecommendedActivity(ctx, user); err != sql.ErrNoRows {
 		return
 	}
 
 	if err = NewProcessor(processorCfg{
-		limit:              4,
-		initialDistance:    20 * 1000,
+		findLimit:          1000,
+		saveLimit:          2,
+		initialDistance:    100 * 1000,
 		distanceMultiplier: 1.5,
 		maxAttempts:        10,
 	}).Process(ctx, user); err != nil {

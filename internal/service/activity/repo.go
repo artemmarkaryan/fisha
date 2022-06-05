@@ -24,7 +24,6 @@ func (repo) getNear(
 		From("activity a").
 		Where(sq.NotEq{"id": exclude}).
 		Where(sq.Expr("earth_distance(ll_to_earth(a.lon, a.lat), ll_to_earth(?, ?)) < ?", lon, lat, distanceMeters)).
-		Limit(limit).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {

@@ -114,7 +114,7 @@ func (s Service) GetRecommendedActivity(ctx context.Context, user int64) (a acti
 	if err = NewProcessor(processorCfg{
 		findLimit:          1000,
 		saveLimit:          2,
-		initialDistance:    100 * 1000,
+		initialDistance:    10 * 1000,
 		distanceMultiplier: 1.5,
 		maxAttempts:        10,
 	}).Process(ctx, user); err != nil {

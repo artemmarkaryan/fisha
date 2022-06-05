@@ -57,12 +57,17 @@ message ReactRequest {
 }
 
 message ActivityMessage {
-    int64 id = 1;
-    string name = 2;
-    string address = 3;
-    string meta = 4;
-    float lon = 5;
-    float lat = 6;
+    message Activity {
+        int64 id = 1;
+        string name = 2;
+        string address = 3;
+        string meta = 4;
+        float lon = 5;
+        float lat = 6;
+    }
+
+    bool found = 1;
+    Activity activity = 2;
 }
 
 message AckRecommendationMessage {

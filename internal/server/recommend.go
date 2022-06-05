@@ -30,17 +30,28 @@ func (s Server) recommend(ctx context.Context) handler {
 				return
 			}
 
+			if err == recommendation.NoMoreActivities {
+				network.Write(w, api.ActivityMessage{
+					Found:    false,
+					Activity: nil,
+				})
+				return
+			}
+
 			network.InternalError(w)
 			return
 		}
 
 		network.Write(w, api.ActivityMessage{
-			Id:      a.Id,
-			Name:    a.Name,
-			Address: a.Address,
-			Meta:    a.Meta,
-			Lon:     a.Lon,
-			Lat:     a.Lat,
+			Found: true,
+			Activity: &api.ActivityMessage_Activity{
+				Id:      a.Id,
+				Name:    a.Name,
+				Address: a.Address,
+				Meta:    a.Meta,
+				Lon:     a.Lon,
+				Lat:     a.Lat,
+			},
 		})
 
 		return

@@ -12,6 +12,7 @@ import (
 )
 
 var NoUserLocation = errors.New("no user location")
+var NoMoreActivities = errors.New("no more activities")
 
 type processorCfg struct {
 	findLimit          uint64
@@ -59,7 +60,7 @@ func (p processor) Process(ctx context.Context, userID int64) error {
 
 		if len(activities) == 0 {
 			if attempts == p.maxAttempts {
-				return errors.New("no more activities")
+				return NoMoreActivities
 			}
 
 			attempts++
